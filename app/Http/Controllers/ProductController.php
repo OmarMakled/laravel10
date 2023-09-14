@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -19,9 +20,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        return response()->json([], 201);
+        $product = Product::create([
+            'name' => $request->input('name'),
+        ]);
+
+        return ProductResource::make($product);
     }
 
     /**
@@ -35,9 +40,12 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Product $product, Request $request)
+    public function update(Product $product, ProductRequest $request)
     {
-        return response()->json();
+        $product->name = $request->name;
+        $product->save();
+
+        return ProductResource::make($product);
     }
 
     /**

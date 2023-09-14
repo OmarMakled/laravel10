@@ -27,9 +27,21 @@ class ProductControllerTest extends TestCase
 
     public function test_create_product(): void
     {
-        $response = $this->post('/api/products');
+        $response = $this->post('/api/products', [
+            'name' => 'foo'
+        ]);
 
         $response->assertStatus(201);
+    }
+
+    public function test_update_product(): void
+    {
+        $product = Product::factory()->create();
+        $response = $this->put('/api/products/' . $product->id, [
+            'name' => 'foo'
+        ]);
+
+        $response->assertStatus(200);
     }
 
     public function test_delete_product(): void
