@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Product;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_get_all_products(): void
     {
         $response = $this->get('/api/products');
@@ -16,7 +19,8 @@ class ProductControllerTest extends TestCase
 
     public function test_get_a_product_by_id(): void
     {
-        $response = $this->get('/api/products/1');
+        $product = Product::factory()->create();
+        $response = $this->get('/api/products/' . $product->id);
 
         $response->assertStatus(200);
     }
@@ -30,7 +34,8 @@ class ProductControllerTest extends TestCase
 
     public function test_delete_product(): void
     {
-        $response = $this->delete('/api/products/1');
+        $product = Product::factory()->create();
+        $response = $this->delete('/api/products/' . $product->id);
 
         $response->assertStatus(204);
     }
