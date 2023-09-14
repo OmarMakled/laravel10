@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ImageRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Models\Image;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -14,7 +16,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::collection(Product::paginate());
+        return ProductResource::collection(Product::with('image')->paginate());
     }
 
     /**
@@ -56,5 +58,20 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function upload(Product $product, ImageRequest $request)
+    {
+        $path = $request->file('image')->store('image');
+        $image = Image::create([
+            'path' => $path,
+        ]);
+        $product->image_id = $image->id;
+        $product->save();
+
+        return ProductResource::make($product);
     }
 }
